@@ -1,5 +1,3 @@
-# sklad.msk
-
 ## Project setup
 ```
 npm install
