@@ -2,6 +2,41 @@
     <header class="header"><div class="container">Todo List</div></header>
     <section class="todos">
         <div class="container">
+            <div class="todos__inputs">
+                <input
+                    class="input todos__input"
+                    type="text"
+                    placeholder="Напиши задачу"
+                    v-model="todo"
+                />
+                <select
+                    class="select todos__select"
+                    name="priority"
+                    v-model="prioritySelected"
+                >
+                    <option value="1">Низкий</option>
+                    <option value="2">Нормальный</option>
+                    <option value="3">Срочный</option>
+                    <option value="4">Немедленный</option>
+                </select>
+                <button class="btn todos__button" @click="addTodo">
+                    Добавить
+                </button>
+            </div>
+            <div class="todos__filter">
+                Сортировать по приоритету:
+                <select
+                    class="select todos__select"
+                    name="filter"
+                    v-model="filter"
+                >
+                    <option value="0">Все</option>
+                    <option value="1">Низкий</option>
+                    <option value="2">Нормальный</option>
+                    <option value="3">Срочный</option>
+                    <option value="4">Немедленный</option>
+                </select>
+            </div>
             <ul class="todos__list">
                 <li class="todos__item todos__item-header">
                     <div class="todo__left">
@@ -14,7 +49,7 @@
                 </li>
                 <li
                     class="todos__item"
-                    v-for="todo in todos"
+                    v-for="todo in todosFilter"
                     :key="todo.id"
                     :style="{
                         backgroundColor: getPriorityById(todo.priorityId).color
@@ -28,6 +63,12 @@
                             {{ getPriorityById(todo.priorityId).priorityName }}
                         </div>
                         <div class="todo__date">{{ todo.date }}</div>
+                        <button
+                            class="btn tudos__btn tudos__btn-trash"
+                            @click="deleteTodo(todo)"
+                        >
+                            🗑
+                        </button>
                     </div>
                 </li>
             </ul>
@@ -41,38 +82,12 @@ export default {
     data() {
         return {
             date: new Date().toLocaleString(),
+            todo: null,
+            prioritySelected: null,
             done: false,
             todoItemColor: null,
-            todos: [
-                {
-                    id: 1,
-                    todo: "Сделать todo приложение",
-                    date: "20-11-2021",
-                    done: false,
-                    priorityId: 1
-                },
-                {
-                    id: 2,
-                    todo: "Натянуть верстку на bitrix",
-                    date: "22-10-2021",
-                    done: false,
-                    priorityId: 2
-                },
-                {
-                    id: 3,
-                    todo: "Понять как работает git",
-                    date: "20-10-2021",
-                    done: false,
-                    priorityId: 3
-                },
-                {
-                    id: 4,
-                    todo: "Лечь спать не позже 23:00",
-                    date: "21-11-2021",
-                    done: false,
-                    priorityId: 4
-                }
-            ],
+            filter: 0,
+            todos: [],
             priority: [
                 { id: 1, priorityName: "Низкий", color: "#cbe8ff" },
                 { id: 2, priorityName: "Нормальный", color: "#a9ffa9" },
@@ -81,11 +96,39 @@ export default {
             ]
         };
     },
+    computed: {
+        todosFilter() {
+            let todosFiltered = [];
+            if (this.filter > 0) {
+                todosFiltered = this.todos.filter(
+                    (item) => item.priorityId == this.filter
+                );
+            } else {
+                todosFiltered = this.todos;
+            }
+
+            return todosFiltered;
+        }
+    },
     methods: {
-        getPriorityById(id) {
-            const priority = this.priority.find((item) => item.id == id);
-            this.todoItemColor = priority.color;
-            return priority;
+        addTodo() {
+            const todo = {
+                id: this.todos.length + 1,
+                todo: this.todo,
+                date: this.date,
+                done: false,
+                priorityId: this.prioritySelected
+            };
+
+            this.todos.push(todo);
+        },
+
+        getPriorityById(priorityId) {
+            return this.priority.find((item) => item.id == priorityId);
+        },
+
+        deleteTodo(todo) {
+            this.todos = this.todos.filter((item) => item !== todo);
         }
     }
 };
