@@ -1,0 +1,17 @@
+{
+  "name": "nikita/sklad.test",
+  "autoload": {
+    "psr-4": {
+      "Api\\": "api/",
+      "Core\\": "core/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Nikita Budantsev",
+      "email": "test@mail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {}
+}
